@@ -245,9 +245,17 @@ export function resolveCampusAndGeneralQuery(query, context = {}) {
   }
 
   // -------------------------------------------------------------
-  // 3. LEAVES & MEDICAL APPROVAL STATUS
+  // 3. LETTER & EMAIL DRAFTING (Check before generic leave status)
   // -------------------------------------------------------------
-  if (q.includes('leave') || q.includes('medical') || q.includes('approval') || q.includes('approved') || q.includes('od') || q.includes('permission')) {
+  if (q.includes('leave letter') || q.includes('leave email') || q.includes('permission letter') || q.includes('write email to hod') || q.includes('extension email') || q.includes('draft letter') || q.includes('draft email')) {
+    return `✉️ **Formal Leave Request Letter Template**:\n\n\`\`\`text\nTo\nThe Head of Department,\nDepartment of Computer Science and Engineering,\nKalasalingam Academy of Research and Education,\nKrishnankoil - 626126.\n\nThrough: Faculty Advisor (Dr. K. Senthil Nathan)\n\nSubject: Application for Medical Leave - Reg.\n\nRespected Sir/Madam,\n\nI am Arun Kumar M (Reg No: 99240040191), studying in 3rd Year B.Tech CSE (Section B). Due to severe fever and on medical advice, I was unable to attend classes on [Dates: e.g., 15th & 16th October 2026].\n\nI have attached the doctor's prescription and medical fitness certificate for your reference. I kindly request you to grant me medical leave for these 2 days and condone my absence in the portal records.\n\nThanking you,\n\nYours faithfully,\nArun Kumar M\nReg No: 99240040191\nContact: +91 98765 43210\n\`\`\``;
+  }
+
+  // -------------------------------------------------------------
+  // 4. LEAVES & MEDICAL APPROVAL STATUS
+  // -------------------------------------------------------------
+  const isOd = /\bod\b/i.test(q) || q.includes('on-duty') || q.includes('on duty');
+  if (q.includes('leave') || q.includes('medical leave') || q.includes('approval') || q.includes('approved') || isOd || q.includes('permission')) {
     if (q.includes('medical') || q.includes('faculty approve') || q.includes('did the faculty')) {
       const med = leaves.find(l => (l.type || '').toLowerCase().includes('medical')) || {
         type: 'Medical / Health Leave',
@@ -366,12 +374,6 @@ export function resolveCampusAndGeneralQuery(query, context = {}) {
     return `🚨 **Kalasalingam Campus Emergency & Key Contacts**:\n\n- **Campus Ambulance / Emergency**: 📞 \`+91-94425-91111\` / \`04563-289000\`\n- **Campus Health Centre**: 📞 \`04563-289000\` (Dr. J. Sugumar, Medical Officer)\n- **Campus Security Control Room**: 📞 \`04563-289001\` (Main Gate & Control Room)\n- **Hostel Warden Office (Men's)**: 📞 \`04563-289002\`\n- **Hostel Warden Office (Women's)**: 📞 \`04563-289003\`\n- **IT Helpdesk & ERP Support**: ✉️ \`ithelpdesk@kalasalingam.ac.in\`\n- **Controller of Examinations (CoE)**: ✉️ \`coe@kalasalingam.ac.in\``;
   }
 
-  // -------------------------------------------------------------
-  // 13. LETTER & EMAIL DRAFTING HELPER
-  // -------------------------------------------------------------
-  if (q.includes('leave letter') || q.includes('leave email') || q.includes('permission letter') || q.includes('write email to hod') || q.includes('extension email')) {
-    return `✉️ **Formal Leave Request Letter Template**:\n\n\`\`\`text\nTo\nThe Head of Department,\nDepartment of Computer Science and Engineering,\nKalasalingam Academy of Research and Education,\nKrishnankoil - 626126.\n\nThrough: Faculty Advisor (Dr. K. Senthil Nathan)\n\nSubject: Application for Medical Leave - Reg.\n\nRespected Sir/Madam,\n\nI am Arun Kumar M (Reg No: 99240040191), studying in 3rd Year B.Tech CSE (Section B). Due to severe fever and on medical advice, I was unable to attend classes on [Dates: e.g., 15th & 16th October 2026].\n\nI have attached the doctor's prescription and medical fitness certificate for your reference. I kindly request you to grant me medical leave for these 2 days and condone my absence in the portal records.\n\nThanking you,\n\nYours faithfully,\nArun Kumar M\nReg No: 99240040191\nContact: +91 98765 43210\n\`\`\``;
-  }
 
   // -------------------------------------------------------------
   // 14. GENERAL AI: PROGRAMMING & TECH
