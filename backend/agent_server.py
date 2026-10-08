@@ -173,24 +173,40 @@ def get_system_instructions() -> str:
     tomorrow_name = (now + timedelta(days=1)).strftime("%A")
     tomorrow_date = (now + timedelta(days=1)).strftime("%B %d, %Y")
     return (
-        f"You are KLU CampusGenie, the official intelligent AI Assistant for Kalasalingam Academy of Research and Education (Kalasalingam University).\n"
+        f"You are KLU CampusGenie, the official intelligent AI Assistant for Kalasalingam Academy of Research and Education (KARE / Kalasalingam University).\n"
         f"Real-Time Context:\n"
         f"- Today is {today_name}, {today_date}.\n"
-        f"- Tomorrow is {tomorrow_name}, {tomorrow_date}.\n"
-        f"When a student asks 'What classes do I have today?' or 'today timetable', check {today_name}.\n"
-        f"When a student asks 'What classes do I have tomorrow?' or 'tomorrow timetable', check {tomorrow_name}.\n"
-        f"Leaves & Approvals Context:\n"
-        f"- The student (Arun Kumar M) has leave applications accessible via get_leave_applications.\n"
-        f"- When asked 'did the faculty approve my medical leave?' or similar questions, check get_leave_applications. Specifically, his Medical/Health Leave (Sep 15 - Sep 16, 2026 for 2 days) was Approved by Dr. K. Senthil Nathan (Faculty Advisor) with remark 'Approved. Take care of your health.'.\n"
-        f"- Also mention if there are any other leaves pending (e.g. Academic Event on Oct 12-13, 2026 is Pending).\n"
-        f"Your purpose is to assist students, faculty, and scholars with academic inquiries, timetable schedules, assignments, deadlines, campus events, and university contacts.\n"
-        f"Formatting Guidelines:\n"
-        f"- You are rendered in a sleek, compact chat window (400px width).\n"
-        f"- Present class timetables and leave records using clean, structured bullet cards with emojis and bold details:\n"
-        f"  Example:\n"
-        f"  - **Slot 1 (09:00 – 10:00)**: **Computer Networks** (`3-CSE-CN`) · Room: `Lab8401` · Faculty: Dr. M. R. Arun\n"
-        f"- If you choose to use a table, keep it compact (max 3 to 4 columns: Time, Subject, Room, Faculty).\n"
-        f"- Always provide helpful, polite, and well-structured answers."
+        f"- Tomorrow is {tomorrow_name}, {tomorrow_date}.\n\n"
+        f"University Profile:\n"
+        f"- Full Name: Kalasalingam Academy of Research and Education (Deemed University u/s 3 of UGC Act 1956).\n"
+        f"- Founder: 'Kalvivallal' Thiru T. Kalasalingam (Est. 1984). Chancellor: Dr. K. Sridharan. Pro-Chancellors: Dr. S. Shasi Anand, Mr. S. Arjun Kalasalingam. Vice-Chancellor: Dr. S. Narayanan.\n"
+        f"- Location: Anand Nagar, Krishnankoil - 626126, Srivilliputtur, Virudhunagar District, Tamil Nadu.\n"
+        f"- Accreditations: NAAC 'A+' Grade (CGPA 3.58+), NIRF Top 50, ABET Accredited, NBA Tier-1.\n\n"
+        f"Academic Regulations (UG / Law / Engg):\n"
+        f"- Attendance: Minimum 75% attendance mandatory. Condonation permitted for 65% to 74% strictly on genuine medical grounds (prior medical leave + physician certificate submitted 2 days before last working day, recommended by HoD to Vice-Chancellor). Below 65% is not condonable (Grade 'W' - must re-register).\n"
+        f"- Absolute Grading Scale: S (>=90%, 10 GP), A (80-89%, 9 GP), B (70-79%, 8 GP), C (60-69%, 7 GP), D (55-59%, 6 GP), E (50-54%, 5 GP), U (<50%, 0 GP - Reappear), W (0 GP - Attendance shortage), I (0 GP - Incomplete).\n"
+        f"- Degree Classification: First Class with Distinction (CGPA >= 8.25 in 1st attempt in minimum duration), First Class (CGPA >= 6.5 in N+2 years), Pass.\n"
+        f"- Course Credits: Min 18 credits, Max 25 credits per regular semester. Re-registration max 8 credits.\n\n"
+        f"KARE Ph.D. Regulations (2023):\n"
+        f"- Eligibility: Master's degree with 55% (50% for SC/ST/OBC/EWS/PwD) or 4-year B.Tech with 75% + GATE score.\n"
+        f"- Admission: KARE-DPET (50% Research Methodology + 50% Subject; 70% exam + 30% interview) or UGC-NET/CSIR-NET/GATE.\n"
+        f"- Duration: Min 3 yrs (after M.Tech) / 4 yrs (after B.Tech), Max 6 yrs (extendable to 8 yrs; 10 yrs for female/PwD with 240 days maternity/childcare leave).\n"
+        f"- Coursework: Min 12 credits including Research Methodology and Research & Publication Ethics (RPE). 27 credits for Integrated Ph.D.\n"
+        f"- Comprehensive Viva: Within 3 semesters to 2 years after coursework.\n"
+        f"- Plagiarism: Mandatory screening via iThenticate at Director (R&D) office.\n"
+        f"- Publications for Synopsis: Min 3 Scopus papers (at least 1 SCI with IF) for Engg/Science; min 2 Scopus + 1 UGC CARE for Management/Law/Arch.\n"
+        f"- Evaluation: 2 external examiners (1 National, 1 International) + open public Viva-Voce defense. Depository: INFLIBNET / Shodhganga.\n\n"
+        f"Academic Calendar (Odd Sem 2025-26):\n"
+        f"- Odd Sem Commencement: July 7 | Course Registration: June 27 - July 5 | Fee Deadline: August 11\n"
+        f"- Sessional I: August 18 | Sessional II / Mid-Sem: October 7 | Last Working Day: November 7\n"
+        f"- Practical Exams: November 10 | Theory Exams: November 17 | Results Declaration: December 19\n"
+        f"- Events: TEKCLUSTER '26, Mirth 2k25 (Sep 12), Vintra (Intramural Sports), Engineers Day (Sep 15).\n\n"
+        f"Active Student Context:\n"
+        f"- Arun Kumar M (Reg No: 99240040191) | 3rd Year B.Tech CSE (Sec B) | CGPA: 8.64 | Attendance: 91.5% | Advisor: Dr. K. Senthil Nathan.\n"
+        f"- Medical Leave (Sep 15 - Sep 16, 2026, 2 days) was APPROVED by Dr. K. Senthil Nathan ('Approved. Take care of your health.').\n\n"
+        f"General AI Capabilities:\n"
+        f"- You also act as an advanced general AI: answer coding questions (Python, C, C++, Java, JS, SQL, algorithms), math, physics, letter drafting, and placement interview tips.\n"
+        f"- Keep responses well-structured with clear markdown, bold headers, and compact tables where appropriate."
     )
 
 # -------------------------------------------------------------
@@ -198,7 +214,7 @@ def get_system_instructions() -> str:
 # -------------------------------------------------------------
 
 def resolve_locally(message: str) -> str:
-    q = message.lower()
+    q = message.lower().strip()
     now = datetime.now()
     today_name = now.strftime("%A")
     today_date = now.strftime("%B %d, %Y")
@@ -206,12 +222,36 @@ def resolve_locally(message: str) -> str:
     tomorrow_date = (now + timedelta(days=1)).strftime("%B %d, %Y")
     yesterday_name = (now - timedelta(days=1)).strftime("%A")
 
+    # Greetings & Casual
+    if q in ["hi", "hello", "hey", "vanakkam", "namaste", "greetings"]:
+        return (
+            "👋 **Hello! Welcome to Kalasalingam Smart Campus Portal!**\n\n"
+            "I am **KLU CampusGenie**, powered by the **Google Antigravity SDK**.\n"
+            "I can assist you with:\n"
+            "- 📅 **Classes & Timetable**: \"What classes do I have today?\" or \"Tomorrow's schedule\"\n"
+            "- 🏥 **Medical Leaves**: \"Did the faculty approve my medical leave?\"\n"
+            "- 📊 **Academic Regulations**: Attendance 75% rule, 65% condonation, absolute grading, CGPA\n"
+            "- 🔬 **KARE Ph.D. Regulations**: Eligibility, KARE-DPET, RAC, coursework, and publication rules\n"
+            "- 🗓️ **Academic Calendar**: Sessional exams, semester results, holidays\n"
+            "- 📝 **Assignments & CGPA**: Deadlines, marks, student profile\n"
+            "- 💻 **General AI**: Coding help (Python, Java, C++), science, math, or drafting leave letters!\n\n"
+            "How can I assist you right now?"
+        )
+
+    if "how are you" in q:
+        return "😊 I'm doing great and ready to assist you! How are your studies and classes going at Kalasalingam University today?"
+
+    if any(k in q for k in ["who are you", "who created you", "what are you"]):
+        return (
+            "🤖 I am **KLU CampusGenie**, the official AI assistant of **Kalasalingam Academy of Research and Education (KARE)**, "
+            "engineered with the **Google Antigravity SDK**. I possess comprehensive knowledge about Kalasalingam University's "
+            "academic rules, Ph.D. regulations, timetable, and examinations, as well as general AI skills for coding, math, and writing!"
+        )
+
     # Leaves / Medical Leave Approval
     if any(k in q for k in ["leave", "medical leave", "approved", "approval", "od", "permission"]):
         leaves = json.loads(get_leave_applications())
-
-        # Specific inquiry for medical leave
-        if "medical" in q:
+        if "medical" in q or "faculty approve" in q or "did the faculty" in q:
             med = next((lv for lv in leaves if "medical" in lv.get("type", "").lower()), None)
             if med:
                 status = med.get("status")
@@ -229,7 +269,6 @@ def resolve_locally(message: str) -> str:
                     f"- **Applied Date**: {med.get('applied')}"
                 )
 
-        # General list of leave applications
         lines = ["📋 **Your Leave Applications & Status**:\n"]
         for lv in leaves:
             status_emoji = "✅" if lv.get("status") == "Approved" else ("⏳" if lv.get("status") == "Pending" else "❌")
@@ -240,6 +279,112 @@ def resolve_locally(message: str) -> str:
                 + (f"   • Remark: *\"{lv.get('remark')}\"*\n" if lv.get('remark') else "")
             )
         return "\n".join(lines)
+
+    # Attendance Regulations & Condonation
+    if "attendance" in q and any(k in q for k in ["rule", "condonation", "shortage", "percentage", "minimum", "65", "75", "policy"]):
+        return (
+            "📊 **Kalasalingam University (KARE) Attendance Regulations**:\n\n"
+            "1. **Mandatory Attendance Requirement**:\n"
+            "- Students must secure a **minimum of 75% attendance** in each course to be eligible for Continuous Assessments (CA) and Semester End Examinations (SEE).\n\n"
+            "2. **Condonation of Shortage of Attendance (Section 4.7.1)**:\n"
+            "- Students securing between **65% and 74% attendance** may apply for condonation of attendance shortage strictly on **genuine medical grounds**.\n"
+            "- **Procedure**: Prior medical leave must be availed, and a formal application along with an authorized physician's medical certificate must be submitted **at least 2 days prior to the last working day**.\n"
+            "- The Head of Department (HoD) verifies the medical reports and forwards the recommendation to the **Vice-Chancellor** for final sanction.\n\n"
+            "3. **Below 65% Attendance**:\n"
+            "- Shortage below 65% is **not condonable** under any circumstance.\n"
+            "- Such students are awarded Grade **'W'** (Failure for want of minimum attendance) and must **re-register** for the course in subsequent semesters."
+        )
+
+    # Grading System & CGPA
+    if any(k in q for k in ["grading", "grade point", "sgpa", "cgpa", "absolute grading", "how to calculate cgpa", "grade s", "grade u", "grade w"]):
+        return (
+            "🎓 **KARE Absolute Grading System & Grade Points**:\n\n"
+            "| Letter Grade | Grade Point | Mark Range | Academic Standing |\n"
+            "| :--- | :---: | :---: | :--- |\n"
+            "| **S** | 10 | >= 90% | Outstanding (Pass) |\n"
+            "| **A** | 9 | 80% - 89% | Excellent (Pass) |\n"
+            "| **B** | 8 | 70% - 79% | Very Good (Pass) |\n"
+            "| **C** | 7 | 60% - 69% | Good (Pass) |\n"
+            "| **D** | 6 | 55% - 59% | Fair (Pass) |\n"
+            "| **E** | 5 | 50% - 54% | Satisfactory (Pass) |\n"
+            "| **U** | 0 | < 50% | Re-appear / Arrear (Fail) |\n"
+            "| **W** | 0 | — | Failure for want of attendance |\n"
+            "| **I** | 0 | — | Incomplete Course |\n\n"
+            "**GPA Calculations**:\n"
+            "- **SGPA** = `Σ(Credits × Grade Points) / Σ(Credits)` for that semester.\n"
+            "- **CGPA** = Cumulative across all semesters up to 2 decimal places.\n\n"
+            "**Degree (Hons) Classifications**:\n"
+            "- 🌟 **First Class with Distinction**: CGPA >= 8.25 in 1st attempt within minimum duration ($N$ years).\n"
+            "- 🎖️ **First Class**: CGPA >= 6.5 completed within maximum duration ($N+2$ years).\n"
+            "- 📜 **Pass**: Cleared all credit and mandatory requirements."
+        )
+
+    # Ph.D. Regulations (2023)
+    if any(k in q for k in ["phd", "ph.d", "doctor of philosophy", "doctoral", "research scholar", "kare-dpet", "synopsis", "thesis", "rac"]):
+        return (
+            "🔬 **Kalasalingam University (KARE) Ph.D. Regulations (2023 Guidelines)**:\n\n"
+            "1. **Eligibility Criteria**:\n"
+            "- **Master's Degree**: Minimum **55% aggregate** (50% for SC/ST/OBC non-creamy layer/differently-abled/EWS).\n"
+            "- **Direct Ph.D. after 4-Year B.Tech**: Minimum **75% aggregate** with a valid **GATE score**.\n\n"
+            "2. **Admission Process**:\n"
+            "- Conducted twice a year via **KARE-DPET** (50% Research Methodology + 50% Subject-specific).\n"
+            "- Selection weightage: **70% entrance test + 30% personal interview**.\n"
+            "- Scholars with UGC-NET / CSIR-NET / GATE / CEED fellowships are exempted from the test and appear directly for interview.\n\n"
+            "3. **Programme Duration**:\n"
+            "- After M.Tech: Min **3 years**, Max **6 years** (extendable to 8 years).\n"
+            "- Direct Ph.D. after B.Tech: Min **4 years**, Max **6 years**.\n"
+            "- Female scholars & PwD (>40%): Relaxation up to **10 years total**, with up to **240 days maternity/childcare leave**.\n\n"
+            "4. **Key Doctoral Milestones**:\n"
+            "- **RAC**: Supervisor (Convener) + 1 External Expert + 2 Internal School members review progress every semester.\n"
+            "- **Coursework**: Minimum **12 credits** (includes Research Methodology + Research & Publication Ethics - RPE). 27 credits for Integrated Ph.D.\n"
+            "- **Comprehensive Viva-Voce**: Within 3 semesters to 2 years after coursework to confirm registration.\n"
+            "- **Plagiarism Screening**: Mandatory check using **iThenticate** at the Office of Director (R&D).\n"
+            "- **Publications for Synopsis**: Min **3 Scopus papers** (at least 1 in SCI journal with Impact Factor) for Engg/Tech/Science; min 2 Scopus + 1 UGC CARE for Management/Law/Arch.\n"
+            "- **Evaluation**: 2 external examiners (1 National, 1 International) followed by open public Viva-Voce defense.\n"
+            "- **Depository**: Hosted on **INFLIBNET / Shodhganga**."
+        )
+
+    # Academic Calendar & Key Dates
+    if any(k in q for k in ["calendar", "sessional", "mid semester", "last working day", "exam date", "practical exam", "theory exam", "results date", "even semester"]):
+        return (
+            "🗓️ **KARE Academic Calendar & Important Dates (Odd Semester 2025-26)**:\n\n"
+            "- 🚀 **Commencement of Odd Semester**: **July 7**\n"
+            "- 📝 **Course Registration**: June 27 – July 5\n"
+            "- ❌ **Last Date for Course Withdrawal**: July 11\n"
+            "- 💰 **Last Date for Tuition Fee Payment**: **August 11**\n"
+            "- ✍️ **Sessional Examination I**: **August 18**\n"
+            "- ✍️ **Sessional Examination II / Mid-Sem**: **October 7**\n"
+            "- 🏁 **Last Working Day**: **November 7**\n"
+            "- 🔬 **End Semester Practical Examinations**: **November 10**\n"
+            "- 📖 **End Semester Theory Examinations**: **November 17**\n"
+            "- 🔄 **Make-up / Arrear Examinations**: **November 28**\n"
+            "- 🏆 **Declaration of Odd Semester Results**: **December 19**\n"
+            "- 🎓 **Commencement of Even Semester 2025-26**: **December 15**\n\n"
+            "**Holidays & Campus Celebrations**:\n"
+            "- Independence Day: Aug 15 | Krishna Jayanthi: Aug 16\n"
+            "- Vinayakar Chathurthi: Aug 27 | Milad-un-Nabi: Sep 5\n"
+            "- Mirth 2k25: Sep 12 | Engineers Day: Sep 15\n"
+            "- Deepavali: Oct 19 | Christmas: Dec 25"
+        )
+
+    # University Overview & Facilities
+    if any(k in q for k in ["kalasalingam", "kare", "about klu", "chancellor", "founder", "location", "address", "naac", "nirf", "schools", "hostel", "library"]):
+        return (
+            "🏛️ **About Kalasalingam Academy of Research and Education (KARE)**:\n\n"
+            "- **History & Legacy**: Founded in 1984 by philanthropic visionary **\"Kalvivallal\" Thiru T. Kalasalingam**. Conferred Deemed University status in 2006 under Section 3 of UGC Act, 1956.\n"
+            "- **Leadership**:\n"
+            "  • **Chancellor**: Dr. K. Sridharan\n"
+            "  • **Pro-Chancellors**: Dr. S. Shasi Anand & Mr. S. Arjun Kalasalingam\n"
+            "  • **Vice-Chancellor**: Dr. S. Narayanan\n"
+            "- **Campus Location**: Sprawling 400+ acre scenic campus at **Anand Nagar, Krishnankoil - 626126, Srivilliputtur**, Virudhunagar District, Tamil Nadu (near Madurai).\n"
+            "- **Key Accreditations**:\n"
+            "  • **NAAC 'A+' Grade** (CGPA 3.58+)\n"
+            "  • **NIRF Top 50** in University Rankings\n"
+            "  • **ABET Accredited** (USA) for Computer Science, ECE, Bio-tech, and Mechanical Engineering\n"
+            "  • **NBA Tier-1** Accreditation\n"
+            "- **Schools**: School of Computing, Electrical, Mechanical, Civil, Bio & Chemical, Agriculture, Architecture, Law, Kalasalingam Business School, and Nursing.\n"
+            "- **Campus Facilities**: 24/7 Central Library, advanced supercomputing clusters, sports complexes with indoor stadiums, clean on-campus hostels (Bharathi, Thamarai, etc.), multi-cuisine cafeteria, and round-the-clock medical care."
+        )
 
     # Timetable / Class Schedule
     if any(k in q for k in ["timetable", "schedule", "class", "routine", "period", "today", "tomorrow", "yesterday"]):
@@ -291,7 +436,7 @@ def resolve_locally(message: str) -> str:
         return "\n".join(lines)
 
     # Student Profile / CGPA / Attendance
-    if any(k in q for k in ["profile", "who am i", "my details", "cgpa", "register number", "reg no", "attendance"]):
+    if any(k in q for k in ["profile", "who am i", "my details", "cgpa", "register number", "reg no"]):
         data = json.loads(get_student_profile())
         return (
             f"🎓 **Student Profile Overview**\n\n"
@@ -318,6 +463,64 @@ def resolve_locally(message: str) -> str:
         for a in submitted:
             lines.append(f"✓ **{a.get('title')}** ({a.get('subject')}) — Submitted on {a.get('submittedDate')}")
         return "\n".join(lines)
+
+    # Letter & Email Drafting
+    if any(k in q for k in ["leave letter", "leave email", "permission letter", "write email to hod"]):
+        return (
+            "✉️ **Formal Medical Leave Letter Template**:\n\n"
+            "```text\n"
+            "To\n"
+            "The Head of Department,\n"
+            "Department of Computer Science and Engineering,\n"
+            "Kalasalingam Academy of Research and Education,\n"
+            "Krishnankoil - 626126.\n\n"
+            "Through: Faculty Advisor (Dr. K. Senthil Nathan)\n\n"
+            "Subject: Application for Medical Leave - Reg.\n\n"
+            "Respected Sir/Madam,\n\n"
+            "I am Arun Kumar M (Reg No: 99240040191), a 3rd-year student of B.Tech CSE (Section B). "
+            "Due to illness and as advised by the medical officer, I was unable to attend classes on [Dates].\n\n"
+            "I have attached the doctor's prescription and medical fitness certificate for your verification. "
+            "I kindly request you to approve my medical leave and condone my absence in the attendance portal.\n\n"
+            "Thanking you,\n\n"
+            "Yours faithfully,\n"
+            "Arun Kumar M\n"
+            "Reg No: 99240040191\n"
+            "```"
+        )
+
+    # General AI: Python
+    if "what is python" in q or "explain python" in q:
+        return (
+            "🐍 **Python** is a high-level, general-purpose programming language renowned for its readable syntax and massive standard library.\n\n"
+            "**Key Use Cases**:\n"
+            "- **Artificial Intelligence & Data Science**: PyTorch, TensorFlow, Pandas, NumPy, Scikit-learn.\n"
+            "- **Web Development**: FastAPI, Django, Flask.\n"
+            "- **Automation & Scripting**: Rapid prototyping and task automation.\n\n"
+            "```python\n"
+            "# Quick Example\n"
+            "def welcome(name):\n"
+            "    return f\"Welcome to Kalasalingam University, {name}!\"\n"
+            "\n"
+            "print(welcome(\"Arun\"))\n"
+            "```"
+        )
+
+    # General AI: Hello World
+    if "hello world" in q:
+        return (
+            "💻 **Hello World in Popular Languages**:\n\n"
+            "**Python**:\n```python\nprint(\"Hello, World!\")\n```\n\n"
+            "**C**:\n```c\n#include <stdio.h>\nint main() { printf(\"Hello, World!\\n\"); return 0; }\n```\n\n"
+            "**Java**:\n```java\npublic class Main { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }\n```"
+        )
+
+    # General AI: Science (Gravity)
+    if "gravity" in q or "what is gravity" in q:
+        return (
+            "🪐 **Gravity** is a fundamental interaction that causes mutual attraction between all things with mass or energy.\n\n"
+            "- **Newton's Universal Gravitation**: $F = G \\frac{m_1 m_2}{r^2}$\n"
+            "- **Einstein's General Relativity**: Gravity is not an invisible pulling force, but rather the curvature of spacetime caused by the uneven distribution of mass and energy."
+        )
 
     # Events
     if any(k in q for k in ["event", "symposium", "hackathon", "tekcluster", "thulir", "kare trophy"]):
@@ -352,11 +555,12 @@ def resolve_locally(message: str) -> str:
         "Here are things I can assist you with right now:\n"
         "- 📅 **Timetable & Classes**: \"What classes do I have today?\" or \"Tomorrow's timetable\"\n"
         "- 🏥 **Leaves & Permissions**: \"Did the faculty approve my medical leave?\"\n"
+        "- 📊 **Academic Regulations**: \"What is the attendance condonation rule?\" or \"Grading system\"\n"
+        "- 🔬 **KARE Ph.D. Regulations**: \"What are the Ph.D. guidelines and publication requirements?\"\n"
+        "- 🗓️ **Academic Calendar**: \"When are Sessional exams and Odd semester results?\"\n"
         "- 📝 **Assignments**: \"What assignments are pending?\"\n"
         "- 🎓 **Academic Profile**: \"Show my CGPA and attendance\"\n"
-        "- 🎉 **Events**: \"Tell me about TEKCLUSTER and hackathons\"\n"
-        "- 🚨 **Emergency & Helpdesk**: \"Give me campus emergency contacts\"\n"
-        "- 📚 **Subjects & Syllabus**: \"What are the topics in Deep Learning?\""
+        "- 💻 **General AI**: \"What is Python?\", \"Write a leave letter to HoD\", math, or coding queries!"
     )
 
 

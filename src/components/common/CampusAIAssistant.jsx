@@ -23,6 +23,7 @@ import {
   campusDirectory,
   emergencyContacts
 } from '../../data/mockData';
+import { resolveCampusAndGeneralQuery, KLU_SYSTEM_PROMPT } from '../../data/kluKnowledgeBase';
 
 export default function CampusAIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,7 @@ export default function CampusAIAssistant() {
     {
       id: 'welcome',
       sender: 'bot',
-      text: "👋 Hello! I am **KLU CampusGenie**, your university AI assistant powered by the **Google Antigravity SDK**.\n\nAsk me anything about your timetable, assignments, leave applications & faculty approvals, attendance, campus events, or emergency contacts!",
+      text: "👋 Hello! I am **KLU CampusGenie**, powered by the **Google Antigravity SDK**.\n\nI have complete knowledge of **Kalasalingam University (KARE)** — Academic Regulations (attendance, condonation, grading), Ph.D. Guidelines, Academic Calendar, Timetable, Leaves & Faculty Approvals, and Campus Facilities, as well as full AI assistance for coding, math, and letter drafting!",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       model: 'Google Antigravity SDK'
     }
@@ -71,120 +72,6 @@ export default function CampusAIAssistant() {
     }
   }, [messages, isOpen]);
 
-  const resolveClientCampusQuery = (query) => {
-    const q = query.toLowerCase();
-    const now = new Date();
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const todayName = dayNames[now.getDay()];
-    const tomorrowName = dayNames[(now.getDay() + 1) % 7];
-    const yesterdayName = dayNames[(now.getDay() + 6) % 7];
-    const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-    // 1. Leaves / Medical Leave Approval
-    if (q.includes('leave') || q.includes('medical') || q.includes('approval') || q.includes('approved') || q.includes('od') || q.includes('permission')) {
-      if (q.includes('medical')) {
-        const med = initialLeavesData.find(l => (l.type || '').toLowerCase().includes('medical'));
-        if (med) {
-          return `🏥 **Medical Leave Status**:\n\n✅ **Yes, your Medical Leave has been Approved!**\n\n- **Leave Type**: ${med.type}\n- **Duration**: ${med.from} to ${med.to} (${med.days} days)\n- **Reason**: ${med.reason}\n- **Status**: **${med.status}**\n- **Approved By**: **${med.approvedBy || 'Dr. K. Senthil Nathan (Faculty Advisor)'}**\n- **Faculty Remark**: *"${med.remark || 'Approved. Take care of your health.'}"*\n- **Applied Date**: ${med.applied}`;
-        }
-      }
-      const studentLeaves = initialLeavesData.filter(l => l.reg === '99240040191' || l.student === 'Arun Kumar M');
-      const lines = ['📋 **Your Leave Applications & Status**:\n'];
-      studentLeaves.forEach(lv => {
-        const emoji = lv.status === 'Approved' ? '✅' : (lv.status === 'Pending' ? '⏳' : '❌');
-        lines.push(`${emoji} **${lv.type}** (${lv.days} Days: ${lv.from} to ${lv.to})\n   • Status: **${lv.status}**${lv.approvedBy ? ` by **${lv.approvedBy}**` : ''}\n${lv.remark ? `   • Remark: *"${lv.remark}"*\n` : ''}`);
-      });
-      return lines.join('\n');
-    }
-
-    // 2. Timetable / Class Schedule
-    if (q.includes('timetable') || q.includes('schedule') || q.includes('class') || q.includes('routine') || q.includes('today') || q.includes('tomorrow') || q.includes('yesterday')) {
-      let targetDay = todayName;
-      let targetLabel = `Today's Timetable (${todayName}, ${dateStr})`;
-
-      if (q.includes('tomorrow')) {
-        targetDay = tomorrowName;
-        targetLabel = `Tomorrow's Timetable (${tomorrowName})`;
-      } else if (q.includes('yesterday')) {
-        targetDay = yesterdayName;
-        targetLabel = `Yesterday's Timetable (${yesterdayName})`;
-      } else {
-        for (const d of ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) {
-          if (q.includes(d.toLowerCase())) {
-            targetDay = d;
-            targetLabel = `Timetable for ${d}`;
-            break;
-          }
-        }
-      }
-
-      if (targetDay === 'Saturday' || targetDay === 'Sunday') {
-        return `🎉 **${targetLabel}**:\n\n**${targetDay}** is a weekend — No academic classes scheduled!\n\nEnjoy your weekend! You can ask for \`Monday timetable\` to view next week's schedule.`;
-      }
-
-      const classes = (timetableData.schedule && timetableData.schedule[targetDay]) || [];
-      const periods = {};
-      (timetableData.periods || []).forEach(p => { periods[p.slot] = p.time; });
-      const activeClasses = classes.filter(c => c.code && !c.spanContinue);
-
-      if (activeClasses.length === 0) {
-        return `📅 **${targetLabel}**: No classes scheduled.`;
-      }
-
-      const lines = [`📅 **${targetLabel}**:\n`];
-      activeClasses.forEach(c => {
-        const slotTime = periods[c.slot] || '';
-        lines.push(`- **Slot ${c.slot} (${slotTime})**: **${c.subject}** (\`${c.code}\`) · Room: \`${c.room}\` · Faculty: ${c.faculty}`);
-      });
-      return lines.join('\n');
-    }
-
-    // 3. Student Profile / CGPA / Attendance
-    if (q.includes('profile') || q.includes('cgpa') || q.includes('attendance') || q.includes('who am i') || q.includes('my details') || q.includes('reg')) {
-      return `🎓 **Student Profile Overview**\n\n- **Name**: ${initialStudentData.name}\n- **Register Number**: \`${initialStudentData.registerNumber}\`\n- **Department**: ${initialStudentData.department} (${initialStudentData.deptShort})\n- **Year / Semester**: ${initialStudentData.year} · ${initialStudentData.semester} (Section ${initialStudentData.section})\n- **CGPA**: **${initialStudentData.cgpa}** / 10.0\n- **Overall Attendance**: **${initialStudentData.attendance}**\n- **Faculty Advisor**: ${initialStudentData.advisor}\n- **Campus Email**: ${initialStudentData.email}`;
-    }
-
-    // 4. Assignments
-    if (q.includes('assignment') || q.includes('due date') || q.includes('pending') || q.includes('submission')) {
-      const pending = assignmentsData.filter(a => a.status === 'Pending');
-      const submitted = assignmentsData.filter(a => a.status === 'Submitted');
-      const lines = ['📝 **Your Academic Assignments**:\n', '**Pending Deadlines**:'];
-      pending.forEach(a => {
-        lines.push(`• **${a.title}** (${a.subject}) — Due: **${a.dueDate}** (Priority: ${(a.priority || '').toUpperCase()})`);
-      });
-      lines.push('\n**Recently Submitted**:');
-      submitted.forEach(a => {
-        lines.push(`✓ **${a.title}** (${a.subject}) — Submitted on ${a.submittedDate}`);
-      });
-      return lines.join('\n');
-    }
-
-    // 5. Events
-    if (q.includes('event') || q.includes('symposium') || q.includes('hackathon') || q.includes('tekcluster') || q.includes('thulir') || q.includes('kare')) {
-      const lines = ['🎉 **Upcoming Campus Events & Activities**:\n'];
-      (initialEvents || []).slice(0, 4).forEach(e => {
-        lines.push(`• **${e.name}** (${e.category})\n  📅 Date: ${e.date} | 📍 Venue: ${e.venue}\n  ℹ️ ${e.shortDescription}\n`);
-      });
-      return lines.join('\n');
-    }
-
-    // 6. Emergency Contacts
-    if (q.includes('emergency') || q.includes('contact') || q.includes('phone') || q.includes('helpdesk') || q.includes('ambulance') || q.includes('security')) {
-      const lines = ['🚨 **Campus Emergency & Key Support Contacts**:\n'];
-      (emergencyContacts || []).forEach(c => {
-        lines.push(`- **${c.role}**: 📞 \`${c.number}\` (${c.details})`);
-      });
-      lines.push('\n**Campus Administration & Helpdesks**:');
-      (campusDirectory || []).slice(0, 3).forEach(d => {
-        lines.push(`- **${d.title}**: 📞 \`${d.contact}\` | ✉️ \`${d.email}\``);
-      });
-      return lines.join('\n');
-    }
-
-    // Default fallback
-    return `👋 Hello! I am **KLU CampusGenie**, your campus AI assistant.\n\nHere are things I can answer for you right now:\n- 📅 **Timetable & Classes**: "What classes do I have today?" or "Tomorrow's timetable"\n- 🏥 **Leaves & Permissions**: "Did the faculty approve my medical leave?"\n- 📝 **Assignments**: "What assignments are pending?"\n- 🎓 **Academic Profile**: "Show my CGPA and attendance"\n- 🎉 **Events**: "Tell me about TEKCLUSTER and hackathons"\n- 🚨 **Emergency**: "Campus emergency contacts"`;
-  };
-
   const handleSend = async (textToSend) => {
     const text = (textToSend || input).trim();
     if (!text || loading) return;
@@ -199,6 +86,16 @@ export default function CampusAIAssistant() {
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
+
+    const campusContext = {
+      student: initialStudentData,
+      timetable: timetableData,
+      assignments: assignmentsData,
+      leaves: initialLeavesData,
+      events: initialEvents,
+      emergencyContacts: emergencyContacts,
+      campusDirectory: campusDirectory
+    };
 
     try {
       // 1. Try local/configured Python backend if reachable
@@ -225,13 +122,53 @@ export default function CampusAIAssistant() {
         setBackendStatus((prev) => ({ ...prev, hasKey: data.has_key }));
       }
     } catch (err) {
-      // 2. On static Netlify deployment, resolve with client-side campus engine
-      const clientReply = resolveClientCampusQuery(text);
+      // 2. On static Netlify deployment or when backend is unreachable:
+      // If student has saved a Gemini API key in browser, call Gemini 2.5 Flash directly
+      const localKey = localStorage.getItem('klu_gemini_api_key');
+      if (localKey) {
+        try {
+          const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${localKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              system_instruction: {
+                parts: [{ text: KLU_SYSTEM_PROMPT }]
+              },
+              contents: [{
+                role: 'user',
+                parts: [{ text: text }]
+              }]
+            })
+          });
+
+          if (geminiRes.ok) {
+            const geminiData = await geminiRes.json();
+            const reply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (reply) {
+              const botMsg = {
+                id: (Date.now() + 1).toString(),
+                sender: 'bot',
+                text: reply,
+                model: 'Google Gemini 2.5 (Cloud AI)',
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              };
+              setMessages((prev) => [...prev, botMsg]);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (geminiErr) {
+          console.warn('Direct Gemini API call failed, falling back to offline campus engine:', geminiErr);
+        }
+      }
+
+      // 3. Resolve using comprehensive offline KLU Campus & General AI engine
+      const clientReply = resolveCampusAndGeneralQuery(text, campusContext);
       const botMsg = {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
         text: clientReply,
-        model: 'KLU Campus Engine (Live Cloud)',
+        model: 'KLU Campus Engine (Google Antigravity SDK)',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, botMsg]);
@@ -833,6 +770,60 @@ export default function CampusAIAssistant() {
             >
               <Sparkles size={12} color="#7c3aed" />
               CGPA & Attendance
+            </button>
+            <button
+              onClick={() => handleSend("What is the attendance condonation rule in KARE?")}
+              style={{
+                fontSize: '0.74rem',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                color: '#334155',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <Clock size={12} color="#0284c7" />
+              Attendance & Condonation
+            </button>
+            <button
+              onClick={() => handleSend("Explain KARE Ph.D. Regulations and publication requirements")}
+              style={{
+                fontSize: '0.74rem',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                color: '#334155',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <BookOpen size={12} color="#6366f1" />
+              Ph.D. Guidelines
+            </button>
+            <button
+              onClick={() => handleSend("When are Sessional exams and Odd semester results?")}
+              style={{
+                fontSize: '0.74rem',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                color: '#334155',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <Calendar size={12} color="#059669" />
+              Academic Calendar
             </button>
             <button
               onClick={() => handleSend("Give me campus emergency contacts")}
