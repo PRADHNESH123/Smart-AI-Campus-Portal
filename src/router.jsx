@@ -11,23 +11,39 @@ export function RouterProvider({ children }) {
     if (window.location.hash && window.location.hash.startsWith('#/')) {
       return window.location.hash.slice(1);
     }
-    return window.location.pathname || '/login';
+    if (window.location.pathname && window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+      return window.location.pathname;
+    }
+    return '/login';
   };
 
   const [currentPath, setCurrentPath] = useState(getInitialPath);
 
-  // Sync with browser back/forward buttons
+  // Sync with browser back/forward and hash changes
   useEffect(() => {
-    const handlePopState = () => {
+    // If opened with /login#/login, clean up pathname to avoid Netlify refresh 404s
+    if (window.location.pathname !== '/' && window.location.pathname !== '' && window.location.hash) {
+      try {
+        window.history.replaceState(null, '', '/' + window.location.hash);
+      } catch (e) {}
+    }
+
+    const handleLocationChange = () => {
       if (window.location.hash && window.location.hash.startsWith('#/')) {
         setCurrentPath(window.location.hash.slice(1));
+      } else if (window.location.pathname && window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+        setCurrentPath(window.location.pathname);
       } else {
-        setCurrentPath(window.location.pathname || '/login');
+        setCurrentPath('/login');
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   const navigate = (path) => {
@@ -35,8 +51,12 @@ export function RouterProvider({ children }) {
     if (!cleanPath.startsWith('/')) {
       cleanPath = '/' + cleanPath;
     }
-    window.history.pushState({}, '', cleanPath);
     window.location.hash = '#' + cleanPath;
+    if (window.location.pathname !== '/' && window.location.pathname !== '') {
+      try {
+        window.history.replaceState(null, '', '/' + window.location.hash);
+      } catch (e) {}
+    }
     setCurrentPath(cleanPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
