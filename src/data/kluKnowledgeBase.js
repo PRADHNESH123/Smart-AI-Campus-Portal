@@ -180,7 +180,8 @@ export function resolveCampusAndGeneralQuery(query, context = {}) {
   // 1. GREETINGS & CASUAL INTERACTION
   // -------------------------------------------------------------
   if (/^(hi|hello|hey|hola|greetings|vanakkam|namaste)[\s!.]*$/i.test(q)) {
-    return `👋 **Hello! Welcome to Kalasalingam Smart Campus Portal!**\n\nI am **KLU CampusGenie**, your intelligent campus and academic AI assistant. I can help you with:\n- 📅 **Classes & Timetable**: "What classes do I have today?" or "Tomorrow's schedule"\n- 🏥 **Leave Status**: "Did the faculty approve my medical leave?"\n- 📜 **KARE Regulations**: Attendance rules, grading scale, condonation criteria, Ph.D. rules\n- 🗓️ **Academic Calendar**: Sessional exams, semester results, holidays\n- 📝 **Assignments & CGPA**: Deadlines, marks, student profile\n- 💻 **General AI**: Coding help (Python, Java, C++), science, math, or drafting leave letters!\n\nHow can I help you today?`;
+    const sName = student?.name ? ` ${student.name.split(' ')[0]}` : '';
+    return `👋 **Hello${sName}!** How can I assist you today?\n\nFeel free to ask me anything about your **classes, timetable, attendance, medical leaves, or KARE regulations**, or any **general questions (programming, math, science, or letter drafting)**!`;
   }
 
   if (q.includes('how are you')) {
