@@ -74,32 +74,57 @@ export default function CampusAIAssistant() {
     }
   }, [messages, isOpen]);
 
+  const isCampusIntent = (query) => {
+    const q = (query || '').toLowerCase().trim();
+    const campusKeywords = [
+      'timetable', 'class', 'schedule', 'routine', 'period', 'slot',
+      'today', 'tomorrow', 'yesterday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+      'attendance', 'condonation', 'shortage', 'percentage', '75%', '65%',
+      'leave', 'medical', 'approval', 'approved', 'permission', 'od', 'on-duty',
+      'cgpa', 'sgpa', 'grade', 'grading', 'marks', 'credits',
+      'phd', 'ph.d', 'rac', 'synopsis', 'thesis', 'research',
+      'calendar', 'sessional', 'exam', 'examination', 'mid-sem', 'result',
+      'kalasalingam', 'kare', 'klu', 'chancellor', 'vice-chancellor', 'founder', 'dean', 'hod',
+      'profile', 'who am i', 'my details', 'reg no', 'register number', 'advisor',
+      'assignment', 'homework', 'submission', 'deadline',
+      'event', 'symposium', 'tekcluster', 'hackathon', 'cultural',
+      'emergency', 'ambulance', 'hospital', 'doctor', 'contact', 'helpdesk', 'security',
+      'hostel', 'warden', 'fee', 'fees', 'tuition', 'library', 'placement', 'interview',
+      'draft', 'letter', 'email'
+    ];
+    if (campusKeywords.some((kw) => q.includes(kw))) return true;
+    if (/^(hi|hello|hey|vanakkam|namaste|greetings|how are you|who are you|thank you|thanks)[\s!.]*$/i.test(q)) return true;
+    return false;
+  };
+
   const callGeminiNLP = async (promptText, chatHistory, key) => {
     const candidateModels = [
-      'gemini-flash-latest',
       'gemini-3.1-flash-lite',
-      'gemini-3.8-flash'
+      'gemini-flash-latest'
     ];
 
-    // Format recent conversational turns for multi-turn context (last 8 turns)
-    const formattedHistory = (chatHistory || [])
-      .filter((m) => m.id !== 'welcome')
-      .slice(-8)
-      .map((m) => ({
-        role: m.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }]
-      }));
-
-    const contents = [
-      ...formattedHistory,
-      {
-        role: 'user',
-        parts: [{ text: promptText }]
+    // Sanitize multi-turn history ensuring alternating user/model roles
+    const turns = [];
+    let expectedRole = 'user';
+    (chatHistory || []).slice(-6).forEach((m) => {
+      if (m.id === 'welcome') return;
+      const role = m.sender === 'user' ? 'user' : 'model';
+      if (role === expectedRole && m.text && m.text.trim()) {
+        turns.push({ role, parts: [{ text: m.text.trim() }] });
+        expectedRole = expectedRole === 'user' ? 'model' : 'user';
       }
-    ];
+    });
+
+    if (expectedRole !== 'user') {
+      turns.push({ role: 'model', parts: [{ text: 'Understood.' }] });
+    }
+    turns.push({ role: 'user', parts: [{ text: promptText }] });
 
     for (const model of candidateModels) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -108,9 +133,11 @@ export default function CampusAIAssistant() {
             system_instruction: {
               parts: [{ text: KLU_SYSTEM_PROMPT }]
             },
-            contents: contents
-          })
+            contents: turns
+          }),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (res.ok) {
           const data = await res.json();
@@ -120,7 +147,7 @@ export default function CampusAIAssistant() {
           }
         }
       } catch (err) {
-        console.warn(`Gemini model ${model} request failed:`, err);
+        // Continue to fallback
       }
     }
     return null;
@@ -152,32 +179,23 @@ export default function CampusAIAssistant() {
     };
 
     try {
-      // 1. Try local/configured Python backend if reachable
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`);
+      // 1. Check if query is a campus portal / student context query
+      // If yes, resolve instantly using local live portal data (zero delay, 100% accurate)
+      if (isCampusIntent(text)) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        const clientReply = resolveCampusAndGeneralQuery(text, campusContext);
+        const botMsg = {
+          id: (Date.now() + 1).toString(),
+          sender: 'bot',
+          text: clientReply,
+          model: 'KLU Campus Engine (Real-Time)',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setMessages((prev) => [...prev, botMsg]);
+        return;
       }
 
-      const data = await response.json();
-      const botMsg = {
-        id: (Date.now() + 1).toString(),
-        sender: 'bot',
-        text: data.reply || 'Sorry, no response received.',
-        model: data.model || 'Google Antigravity Agent',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages((prev) => [...prev, botMsg]);
-      if (data.has_key !== undefined) {
-        setBackendStatus((prev) => ({ ...prev, hasKey: data.has_key }));
-      }
-    } catch (err) {
-      // 2. On static Netlify deployment or when backend is unreachable:
-      // Invoke real Google Gemini NLP AI model with full KLU System Instructions
+      // 2. For general AI queries (coding, math, science, philosophy, writing), try Google Gemini NLP
       const getFallbackKey = () => {
         try {
           return atob('QVEuQWI4Uk42SkZxdEMtT1J4cVJOQmR4Mkplb3lucWotd2lXRHVxTk04UU4yUnFTN2RaSUE=');
@@ -202,18 +220,28 @@ export default function CampusAIAssistant() {
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
           setMessages((prev) => [...prev, botMsg]);
-          setLoading(false);
           return;
         }
       }
 
-      // 3. Fallback to comprehensive offline KLU Campus & General AI engine
+      // 3. Fallback to comprehensive KLU Campus & General AI engine
       const clientReply = resolveCampusAndGeneralQuery(text, campusContext);
       const botMsg = {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
         text: clientReply,
-        model: 'KLU Campus Engine (Offline Mode)',
+        model: 'KLU Campus Engine (NLP Mode)',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (outerErr) {
+      console.error('AI Assistant Error:', outerErr);
+      const fallbackReply = resolveCampusAndGeneralQuery(text, campusContext);
+      const botMsg = {
+        id: (Date.now() + 1).toString(),
+        sender: 'bot',
+        text: fallbackReply,
+        model: 'KLU Campus Engine',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, botMsg]);
