@@ -39,12 +39,11 @@ export default function App() {
   // Normalize path without query string or hash
   const path = currentPath.split('?')[0].split('#')[0] || '/login';
 
-  // 1. Standalone Authentication & Role Selection Pages
+  // 1. Standalone Authentication & Role Selection Pages (AI Assistant hidden before login)
   if (path === '/login' || path === '/' || path === '') {
     return (
       <>
         <LandingPage />
-        <CampusAIAssistant />
         <Toast />
       </>
     );
@@ -54,7 +53,6 @@ export default function App() {
     return (
       <>
         <StudentLoginPage />
-        <CampusAIAssistant />
         <Toast />
       </>
     );
@@ -78,11 +76,12 @@ export default function App() {
     );
   }
 
-  // 2. Intentionally Empty Dashboards (Faculty & HOD)
+  // 2. Authenticated Dashboards (Faculty & HOD)
   if (path === '/faculty/dashboard') {
     return (
       <>
         <FacultyDashboardPage />
+        <CampusAIAssistant />
         <Toast />
       </>
     );
@@ -92,6 +91,7 @@ export default function App() {
     return (
       <>
         <HodDashboardPage />
+        <CampusAIAssistant />
         <Toast />
       </>
     );

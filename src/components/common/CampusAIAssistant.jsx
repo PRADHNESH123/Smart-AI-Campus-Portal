@@ -24,8 +24,10 @@ import {
   emergencyContacts
 } from '../../data/mockData';
 import { resolveCampusAndGeneralQuery, KLU_SYSTEM_PROMPT } from '../../data/kluKnowledgeBase';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CampusAIAssistant() {
+  const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -88,7 +90,7 @@ export default function CampusAIAssistant() {
     setLoading(true);
 
     const campusContext = {
-      student: initialStudentData,
+      student: currentUser || initialStudentData,
       timetable: timetableData,
       assignments: assignmentsData,
       leaves: initialLeavesData,
@@ -359,6 +361,11 @@ export default function CampusAIAssistant() {
 
     return elements;
   };
+
+  // Only visible after login/signin
+  if (!currentUser) {
+    return null;
+  }
 
   return (
     <>
